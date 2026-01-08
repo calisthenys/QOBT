@@ -29,7 +29,6 @@
 </div>
 
 <div id="app" class="hidden h-full w-full flex flex-col overflow-hidden">
-  
   <header id="main-header" class="bg-blue-600 text-white px-4 py-4 shadow-lg flex-shrink-0 z-20">
     <div class="max-w-lg mx-auto flex justify-between items-center">
       <div>
@@ -43,7 +42,6 @@
   </header>
 
   <main id="main-content" class="flex-1 overflow-auto scrollbar-hide">
-    
     <section id="public-view" class="h-full flex flex-col">
       <div class="px-4 py-3 bg-white border-b sticky top-0 z-10">
         <div class="max-w-lg mx-auto">
@@ -51,9 +49,7 @@
           <p id="member-count" class="text-[10px] text-blue-500 mt-2 text-center font-bold uppercase tracking-wider"></p>
         </div>
       </div>
-      <div id="members-list" class="flex-1 overflow-auto px-4 py-4">
-        <div class="max-w-lg mx-auto space-y-3"></div>
-      </div>
+      <div id="members-list" class="flex-1 overflow-auto px-4 py-4"><div class="max-w-lg mx-auto space-y-3"></div></div>
     </section>
 
     <section id="login-view" class="hidden h-full flex items-center justify-center px-4 bg-gray-50">
@@ -84,17 +80,13 @@
         <h2 id="form-title" class="font-bold text-gray-800">CADASTRAR</h2>
         <button id="save-form-btn" class="bg-blue-600 text-white px-6 py-2 rounded-xl text-sm font-bold shadow-md">SALVAR</button>
       </div>
-      
       <div class="flex-1 overflow-auto p-4 space-y-4">
         <div class="max-w-lg mx-auto space-y-4 pb-10">
           <div class="bg-white p-6 rounded-2xl shadow-sm text-center">
-            <div id="photo-preview" class="w-24 h-24 bg-blue-50 rounded-full mx-auto mb-4 border-2 border-dashed border-blue-200 flex items-center justify-center overflow-hidden">
-              <svg class="w-8 h-8 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
-            </div>
+            <div id="photo-preview" class="w-24 h-24 bg-blue-50 rounded-full mx-auto mb-4 border-2 border-dashed border-blue-200 flex items-center justify-center overflow-hidden">+</div>
             <input type="file" id="photo-input" accept="image/*" class="hidden">
             <button onclick="$('photo-input').click()" class="text-blue-600 text-xs font-bold uppercase">Alterar Foto</button>
           </div>
-
           <div class="bg-white p-4 rounded-2xl shadow-sm space-y-4">
             <input id="input-nome" type="text" placeholder="Nome Completo" class="w-full p-3 bg-gray-50 rounded-xl border-none outline-none focus:ring-2 ring-blue-500">
             <select id="input-cargo" class="w-full p-3 bg-gray-50 rounded-xl border-none outline-none">
@@ -107,26 +99,18 @@
               <label class="flex-1"><input type="radio" name="marital-status" value="solteiro" id="radio-solteiro" checked class="hidden peer"><div class="p-3 bg-gray-50 border-2 border-transparent rounded-xl text-center text-sm peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-all">Solteiro</div></label>
             </div>
           </div>
-
           <div id="spouse-section" class="hidden bg-white p-4 rounded-2xl shadow-sm space-y-4 border-2 border-blue-100">
-            <p class="text-[10px] font-bold text-blue-600 uppercase">Informações do Cônjuge</p>
-            <div id="spouse-photo-preview" class="w-20 h-20 bg-gray-50 rounded-full mx-auto border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden"></div>
-            <input type="file" id="spouse-photo-input" accept="image/*" class="hidden">
-            <button onclick="$('spouse-photo-input').click()" class="w-full text-blue-600 text-xs font-bold uppercase mb-2">Foto do Cônjuge</button>
             <input id="input-conjuge" type="text" placeholder="Nome do Cônjuge" class="w-full p-3 bg-gray-50 rounded-xl border-none">
             <input id="input-cargo-conjuge" type="text" placeholder="Cargo do Cônjuge" class="w-full p-3 bg-gray-50 rounded-xl border-none">
           </div>
-
           <div class="bg-white p-4 rounded-2xl shadow-sm space-y-4">
-            <input id="input-setor" type="text" placeholder="Setor (Ex: Setor 01)" class="w-full p-3 bg-gray-50 rounded-xl border-none">
-            <input id="input-campo" type="text" placeholder="Campo (Ex: Tapauá)" class="w-full p-3 bg-gray-50 rounded-xl border-none">
+            <input id="input-setor" type="text" placeholder="Setor" class="w-full p-3 bg-gray-50 rounded-xl border-none">
+            <input id="input-campo" type="text" placeholder="Campo" class="w-full p-3 bg-gray-50 rounded-xl border-none">
           </div>
         </div>
       </div>
     </section>
-
     <section id="profile-view" class="hidden h-full bg-white overflow-auto"></section>
-
   </main>
 
   <footer class="bg-white p-4 border-t text-center flex-shrink-0">
@@ -140,9 +124,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
-// CONFIGURAÇÕES
-const CHURCH_KEY = "TAPAUA2026"; // Chave de entrada para membros
-const ADMIN_PASS = "IGREJA2026"; // Senha para editar
+const CHURCH_KEY = "TAPAUA2026";
+const ADMIN_PASS = "IGREJA2026";
 
 const firebaseConfig = {
   apiKey:"AIzaSyCTfWEzEhm1EwgV5rXHeyYobyCj5HODrGA",
@@ -157,17 +140,53 @@ const db = firebase.firestore();
 
 let members = [];
 let isAdmin = false;
-let editingId = null;
-let photoBase64 = "";
-let spousePhotoBase64 = "";
-
 const $ = (id) => document.getElementById(id);
 
+// --- FUNÇÃO DE AUTO-CADASTRO (IMPORTANTE) ---
+async function checkAndSeedData() {
+  const snapshot = await db.collection("obreiro").limit(1).get();
+  if (snapshot.empty) {
+    console.log("Banco vazio. Cadastrando obreiros iniciais...");
+    const initialMembers = [
+      { nome: "ADINO FILHO GOMES RODRIGUES", cargo: "Pastor", casado: true, conjuge: "ELDA DE SOUZA RODRIGUES", cargo_conjuge: "Missionária" },
+      { nome: "CALISTHENYS DE SOUZA RODRIGUES", cargo: "Pastor", casado: true, conjuge: "SHEYLA DE OLIVEIRA RODRIGUES", cargo_conjuge: "Missionária" },
+      { nome: "ALTAIR SOARES DA SILVA", cargo: "Pastor", casado: true, conjuge: "ELIANA BORGES DA SILVA", cargo_conjuge: "Missionária" },
+      { nome: "ARNALDO SABINO DE ARAÚJO", cargo: "Pastor", casado: true, conjuge: "ESTHER CHAVES DE ARAÚJO", cargo_conjuge: "Missionária" },
+      { nome: "DANIEL VIEIRA BATALHA", cargo: "Pastor", casado: true, conjuge: "LUCINEIA DOS SANTOS BATALHA", cargo_conjuge: "Missionária" },
+      { nome: "NATANAEL SOUZA BATISTA", cargo: "Pastor", casado: true, conjuge: "RAIMUNDA NONATA ALVINO DE SOUZA", cargo_conjuge: "Missionária" },
+      { nome: "RONILDO DOS SANTOS AUZIER", cargo: "Evangelista", casado: true, conjuge: "MISLANE DOS SANTOS COSTA AUZIER", cargo_conjuge: "Missionária" },
+      { nome: "ROBERTO DOS SANTOS CAMPOS", cargo: "Evangelista", casado: true, conjuge: "JUSLEY GAMA DE MOURA", cargo_conjuge: "Missionária" },
+      { nome: "ERLANE DE OLIVEIRA TAVARES", cargo: "Evangelista", casado: true, conjuge: "MARIA ILCICLEIDE CRAVEIRO GAMA", cargo_conjuge: "Missionária" },
+      { nome: "ADAIDO LIMA DE OLIVEIRA", cargo: "Evangelista", casado: true, conjuge: "MARIZETE TEIXEIRA DA MATA", cargo_conjuge: "Missionária" },
+      { nome: "GILBERTO COSTA VIEIRA", cargo: "Evangelista", casado: true, conjuge: "MARIA DOS SANTOS VIEIRA", cargo_conjuge: "Missionária" },
+      { nome: "LUIS CLAUDIO BARBOSA DE OLIVEIRA", cargo: "Evangelista", casado: true, conjuge: "MARIA APARECIDA BARBOSA DE OLIVEIRA", cargo_conjuge: "Missionária" },
+      { nome: "JEDSON PINHEIRO DUARTE", cargo: "Presbítero", casado: true, conjuge: "FRANCISJANE SILVA BELEZA", cargo_conjuge: "Missionária" },
+      { nome: "ANTONIO TAVARES FERREIRA FILHO", cargo: "Presbítero", casado: true, conjuge: "KARINA FIRMINO DA COSTA", cargo_conjuge: "Missionária" },
+      { nome: "ROBSON FONSECA TAVARES", cargo: "Presbítero", casado: true, conjuge: "LUZINEIA GOMES TAVARES", cargo_conjuge: "Missionária" },
+      { nome: "MARCOS MICAIAS DE SOUZA RODRIGUES", cargo: "Diácono", casado: false },
+      { nome: "SEBASTIÃO CORRÊA", cargo: "Diácono", casado: false },
+      { nome: "ANTONIO CARLOS CARVALHO DE OLIVEIRA", cargo: "Diácono", casado: false },
+      { nome: "EDVALDO ABILIO DA SILVA", cargo: "Diácono", casado: false }
+    ];
+
+    for (const m of initialMembers) {
+      await db.collection("obreiro").add({
+        ...m,
+        setor: "Tapauá",
+        campo: "Sede",
+        foto: "",
+        foto_conjuge: ""
+      });
+    }
+  }
+}
+
 // --- CONTROLE DE ACESSO ---
-$("unlock-btn").onclick = () => {
+$("unlock-btn").onclick = async () => {
   if($("gate-key").value.toUpperCase() === CHURCH_KEY) {
     $("gatekeeper-view").classList.add("hidden");
     $("app").classList.remove("hidden");
+    await checkAndSeedData(); // Tenta cadastrar se estiver vazio
     startApp();
   } else {
     $("gate-error").classList.remove("hidden");
@@ -177,7 +196,6 @@ $("unlock-btn").onclick = () => {
 
 $("lock-app").onclick = () => location.reload();
 
-// --- INICIALIZAÇÃO ---
 function startApp() {
   db.collection("obreiro").orderBy("nome").onSnapshot(snap => {
     members = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -186,7 +204,6 @@ function startApp() {
   });
 }
 
-// --- NAVEGAÇÃO ---
 function showView(v){
   ["public","login","admin","form","profile"].forEach(s => $(`${s}-view`).classList.add("hidden"));
   $(`${v}-view`).classList.remove("hidden");
@@ -198,77 +215,9 @@ $("login-btn").onclick = () => {
     isAdmin = true;
     showView("admin");
     $("admin-password").value = "";
-  } else {
-    alert("Senha incorreta!");
-  }
+  } else alert("Senha incorreta!");
 };
 $("logout-btn").onclick = () => { isAdmin=false; showView("public"); };
-
-// --- FORMULÁRIO E FOTOS ---
-$("add-member-btn").onclick = () => {
-  editingId = null;
-  photoBase64 = ""; spousePhotoBase64 = "";
-  $("input-nome").value = "";
-  $("form-title").textContent = "CADASTRAR";
-  updatePreviews();
-  showView("form");
-};
-
-// Toggle Cônjuge
-document.getElementsByName("marital-status").forEach(r => {
-  r.onchange = (e) => $("spouse-section").classList.toggle("hidden", e.target.value === "solteiro");
-});
-
-function readImg(file, target) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const max = 300;
-      let w = img.width, h = img.height;
-      if(w > h && w > max) { h *= max/w; w = max; } else if(h > max) { w *= max/h; h = max; }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-      if(target === 'main') photoBase64 = canvas.toDataURL("image/jpeg", 0.7);
-      else spousePhotoBase64 = canvas.toDataURL("image/jpeg", 0.7);
-      updatePreviews();
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-$("photo-input").onchange = (e) => readImg(e.target.files[0], 'main');
-$("spouse-photo-input").onchange = (e) => readImg(e.target.files[0], 'spouse');
-
-function updatePreviews() {
-  $("photo-preview").innerHTML = photoBase64 ? `<img src="${photoBase64}" class="w-full h-full object-cover">` : "+";
-  $("spouse-photo-preview").innerHTML = spousePhotoBase64 ? `<img src="${spousePhotoBase64}" class="w-full h-full object-cover">` : "";
-}
-
-// --- SALVAR ---
-$("save-form-btn").onclick = async () => {
-  const data = {
-    nome: $("input-nome").value,
-    cargo: $("input-cargo").value,
-    casado: $("radio-casado").checked,
-    conjuge: $("input-conjuge").value,
-    cargo_conjuge: $("input-cargo-conjuge").value,
-    setor: $("input-setor").value,
-    campo: $("input-campo").value,
-    foto: photoBase64,
-    foto_conjuge: spousePhotoBase64
-  };
-
-  if(!data.nome || !data.cargo) return alert("Preencha Nome e Cargo!");
-
-  if(editingId) await db.collection("obreiro").doc(editingId).update(data);
-  else await db.collection("obreiro").add(data);
-  
-  showView("admin");
-  toast("Salvo com sucesso!");
-};
 
 // --- LISTAGENS ---
 function renderPublicList(q="") {
@@ -278,7 +227,7 @@ function renderPublicList(q="") {
     <div onclick="showProfile('${m.id}')" class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 flex items-center gap-4 active:scale-95 transition-all">
       ${m.foto ? `<img src="${m.foto}" class="w-14 h-14 rounded-full object-cover">` : `<div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 font-bold">${m.nome[0]}</div>`}
       <div>
-        <p class="font-bold text-gray-800">${m.nome}</p>
+        <p class="font-bold text-gray-800 text-sm">${m.nome}</p>
         <p class="text-[10px] text-blue-600 font-bold uppercase tracking-widest">${m.cargo}</p>
       </div>
     </div>
@@ -288,67 +237,41 @@ function renderPublicList(q="") {
 
 function renderAdminList() {
   $("admin-members-list").innerHTML = members.map(m => `
-    <div class="bg-white p-3 rounded-xl border flex justify-between items-center shadow-sm">
-      <span class="text-sm font-bold text-gray-700">${m.nome}</span>
+    <div class="bg-white p-3 rounded-xl border flex justify-between items-center">
+      <span class="text-xs font-bold text-gray-700">${m.nome}</span>
       <div class="flex gap-2">
-        <button onclick="editMember('${m.id}')" class="p-2 text-blue-600">✏️</button>
-        <button onclick="deleteMember('${m.id}')" class="p-2 text-red-600">🗑️</button>
+        <button onclick="editMember('${m.id}')">✏️</button>
+        <button onclick="deleteMember('${m.id}')">🗑️</button>
       </div>
     </div>
   `).join("");
 }
-
-window.editMember = (id) => {
-  const m = members.find(x => x.id === id);
-  editingId = id;
-  $("input-nome").value = m.nome;
-  $("input-cargo").value = m.cargo;
-  $("input-setor").value = m.setor;
-  $("input-campo").value = m.campo;
-  photoBase64 = m.foto || "";
-  spousePhotoBase64 = m.foto_conjuge || "";
-  if(m.casado) {
-    $("radio-casado").checked = true;
-    $("spouse-section").classList.remove("hidden");
-    $("input-conjuge").value = m.conjuge;
-    $("input-cargo-conjuge").value = m.cargo_conjuge;
-  }
-  updatePreviews();
-  showView("form");
-};
-
-window.deleteMember = async (id) => {
-  if(confirm("Deseja realmente excluir?")) {
-    await db.collection("obreiro").doc(id).delete();
-    toast("Excluído!");
-  }
-};
 
 function showProfile(id) {
   const m = members.find(x => x.id === id);
   $("profile-view").innerHTML = `
     <div class="bg-blue-600 text-white p-4 flex items-center gap-4 sticky top-0 z-10 shadow-md">
       <button onclick="showView('public')" class="text-xl">←</button>
-      <span class="font-bold uppercase text-sm tracking-widest">Ficha de Obreiro</span>
+      <span class="font-bold uppercase text-xs">Ficha de Obreiro</span>
     </div>
     <div class="p-8 text-center bg-gradient-to-b from-blue-50 to-white">
       ${m.foto ? `<img src="${m.foto}" class="w-32 h-32 rounded-full mx-auto border-4 border-white shadow-2xl object-cover">` : `<div class="w-32 h-32 bg-blue-100 rounded-full mx-auto flex items-center justify-center text-3xl font-bold text-blue-300">${m.nome[0]}</div>`}
-      <h2 class="text-2xl font-bold text-gray-800 mt-6 leading-tight">${m.nome}</h2>
-      <div class="inline-block bg-blue-600 text-white px-6 py-1.5 rounded-full text-[10px] font-black uppercase mt-4 tracking-[0.2em] shadow-lg">${m.cargo}</div>
+      <h2 class="text-xl font-bold text-gray-800 mt-6 leading-tight">${m.nome}</h2>
+      <div class="inline-block bg-blue-600 text-white px-6 py-1.5 rounded-full text-[10px] font-black uppercase mt-4 shadow-lg">${m.cargo}</div>
     </div>
     <div class="px-6 space-y-4 pb-10">
       <div class="grid grid-cols-2 gap-4">
-        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center"><p class="text-[9px] font-black text-gray-400 uppercase mb-1">Setor</p><p class="font-bold text-gray-700">${m.setor || '---'}</p></div>
-        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center"><p class="text-[9px] font-black text-gray-400 uppercase mb-1">Campo</p><p class="font-bold text-gray-700">${m.campo || '---'}</p></div>
+        <div class="bg-gray-50 p-4 rounded-2xl text-center"><p class="text-[9px] font-black text-gray-400 uppercase">Setor</p><p class="font-bold text-gray-700">${m.setor || '---'}</p></div>
+        <div class="bg-gray-50 p-4 rounded-2xl text-center"><p class="text-[9px] font-black text-gray-400 uppercase">Campo</p><p class="font-bold text-gray-700">${m.campo || '---'}</p></div>
       </div>
       ${m.casado ? `
         <div class="bg-blue-50 p-6 rounded-3xl border border-blue-100 mt-4">
           <p class="text-[9px] font-black text-blue-400 uppercase mb-4 tracking-widest">Cônjuge</p>
           <div class="flex items-center gap-4">
-             ${m.foto_conjuge ? `<img src="${m.foto_conjuge}" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-sm">` : `<div class="w-16 h-16 bg-blue-100 rounded-full"></div>`}
+             ${m.foto_conjuge ? `<img src="${m.foto_conjuge}" class="w-16 h-16 rounded-full object-cover">` : `<div class="w-16 h-16 bg-blue-100 rounded-full"></div>`}
              <div>
-                <p class="font-bold text-gray-800">${m.conjuge || "---"}</p>
-                <p class="text-xs text-blue-600 font-bold uppercase">${m.cargo_conjuge || "Auxiliar"}</p>
+                <p class="font-bold text-gray-800 text-sm">${m.conjuge || "---"}</p>
+                <p class="text-xs text-blue-600 font-bold uppercase">${m.cargo_conjuge || "Missionária"}</p>
              </div>
           </div>
         </div>
