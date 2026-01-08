@@ -2,75 +2,109 @@
 <html lang="pt-BR" class="h-full">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LISTA DE OBREIROS - Lista de Obreiros</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>QOBT - Lista de Obreiros</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
-  body{font-family:'Inter',sans-serif;}
-  .scrollbar-hide::-webkit-scrollbar{display:none}
-  .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
+  body { font-family: 'Inter', sans-serif; background-color: #001f3f; color: white; }
+  .text-gold { color: #D4AF37; }
+  .bg-gold { background-color: #D4AF37; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  input::placeholder { color: rgba(255, 255, 255, 0.4); }
 </style>
 </head>
-<body class="bg-blue-50 h-full">
+<body class="h-full overflow-hidden">
 
 <div id="app" class="h-full w-full flex flex-col overflow-hidden">
-  <header class="bg-blue-600 text-white px-4 py-4 shadow-lg flex-shrink-0 z-20 text-center">
-    <div class="max-w-lg mx-auto">
-      <h1 class="text-xl font-bold tracking-tight">LISTA DE OBREIROS</h1>
-      <p class="text-blue-100 text-[10px] uppercase font-bold tracking-widest">LISTA DE OBREIROS • TAPAUÁ</p>
+  <header class="bg-[#001f3f] border-b border-gold/20 text-white px-4 py-6 shadow-lg flex-shrink-0 z-20">
+    <div class="max-w-lg mx-auto flex justify-between items-center">
+      <a href="https://ktap558.github.io/" class="text-gold text-xs font-bold flex items-center">
+        <i class="fas fa-chevron-left mr-2"></i> VOLTAR
+      </a>
+      <div class="text-center">
+        <h1 class="text-lg font-800 tracking-tighter text-gold uppercase leading-tight">Lista de<br>Obreiros</h1>
+      </div>
+      <div class="w-10"></div> 
     </div>
   </header>
 
   <main class="flex-1 overflow-auto scrollbar-hide">
     <section id="public-view" class="h-full flex flex-col">
-      <div class="px-4 py-3 bg-white border-b sticky top-0 z-10">
-        <input type="text" id="search-input" placeholder="Buscar por nome, cargo ou campo..." class="w-full px-4 py-2.5 bg-gray-100 rounded-xl text-sm outline-none border-2 border-transparent focus:border-blue-200">
-        <p id="member-count" class="text-[10px] text-blue-500 mt-2 text-center font-bold uppercase"></p>
+      <div class="px-6 py-4 sticky top-0 z-10 bg-[#001f3f]/90 backdrop-blur-md">
+        <div class="relative">
+            <i class="fas fa-search absolute left-4 top-3.5 text-gold/50 text-sm"></i>
+            <input type="text" id="search-input" placeholder="Buscar por nome, cargo ou campo..." 
+            class="w-full pl-12 pr-4 py-3 bg-white/5 rounded-2xl text-sm outline-none border border-gold/20 focus:border-gold text-white">
+        </div>
+        <p id="member-count" class="text-[9px] text-gold/60 mt-3 text-center font-bold uppercase tracking-[2px]"></p>
       </div>
-      <div id="members-list" class="flex-1 px-4 py-4"><div class="max-w-lg mx-auto space-y-3"></div></div>
-    </section>
 
-    <section id="login-view" class="hidden h-full flex items-center justify-center px-4">
-      <div class="bg-white max-w-xs w-full p-6 rounded-3xl shadow-xl border text-center">
-        <h2 class="font-bold mb-4 uppercase">Painel Administrativo</h2>
-        <input id="admin-password" type="password" placeholder="Digite a Senha ADM" class="w-full px-4 py-3 bg-gray-100 rounded-xl text-center mb-3 outline-none border-2 border-transparent focus:border-blue-600">
-        <button id="login-btn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">Entrar</button>
-        <button onclick="showView('public')" class="w-full text-gray-400 text-xs mt-4">VOLTAR PARA A LISTA</button>
-      </div>
-    </section>
-
-    <section id="admin-view" class="hidden h-full flex flex-col bg-gray-50">
-      <div class="px-4 py-3 bg-gray-800 text-white flex justify-between items-center">
-        <span class="font-bold text-sm">GERENCIAR</span>
-        <button onclick="isAdmin=false;showView('public')" class="text-xs bg-red-600 px-3 py-1 rounded-lg">Sair</button>
-      </div>
-      <div class="flex-1 overflow-auto p-4">
-        <div id="admin-members-list" class="max-w-lg mx-auto space-y-2"></div>
+      <div id="members-list" class="flex-1 px-6 py-2">
+          <div class="max-w-lg mx-auto space-y-4"></div>
       </div>
     </section>
 
-    <section id="form-view" class="hidden h-full bg-white flex flex-col p-4">
-       <div class="flex justify-between mb-4"><button onclick="showView('admin')" class="text-gray-500">Cancelar</button><button id="save-form-btn" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold">SALVAR</button></div>
-       <div class="flex-1 overflow-auto space-y-4">
+    <section id="login-view" class="hidden h-full flex items-center justify-center px-6">
+      <div class="bg-white/5 w-full max-w-xs p-8 rounded-[2rem] border border-gold/20 text-center backdrop-blur-sm">
+        <i class="fas fa-user-shield text-gold text-3xl mb-4"></i>
+        <h2 class="font-bold mb-6 uppercase text-xs tracking-widest text-gold">Secretaria</h2>
+        <input id="admin-password" type="password" placeholder="SENHA ADM" class="w-full px-4 py-4 bg-white/10 rounded-xl text-center mb-4 outline-none border border-gold/10 text-white">
+        <button id="login-btn" class="w-full bg-gold text-[#001f3f] py-4 rounded-xl font-900 uppercase tracking-tighter shadow-lg">Acessar</button>
+        <button onclick="showView('public')" class="w-full text-white/40 text-[10px] mt-6 uppercase font-bold">Voltar</button>
+      </div>
+    </section>
+
+    <section id="admin-view" class="hidden h-full flex flex-col bg-[#001226]">
+      <div class="px-6 py-4 border-b border-gold/10 flex justify-between items-center bg-[#001f3f]">
+        <span class="font-bold text-[10px] uppercase text-gold tracking-widest">Painel Obreiros</span>
+        <div class="flex gap-3">
+            <button onclick="openAddForm()" class="bg-gold text-[#001f3f] px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-tighter">+ NOVO</button>
+            <button onclick="isAdmin=false;showView('public')" class="text-[10px] bg-red-500/20 text-red-500 border border-red-500/50 px-3 py-2 rounded-lg font-bold uppercase">Sair</button>
+        </div>
+      </div>
+      <div class="flex-1 overflow-auto p-6">
+        <div id="admin-members-list" class="max-w-lg mx-auto space-y-3"></div>
+      </div>
+    </section>
+
+    <section id="form-view" class="hidden h-full bg-[#001f3f] flex flex-col p-6 overflow-auto">
+       <div class="flex justify-between items-center mb-8">
+           <button onclick="showView('admin')" class="text-white/50 font-bold text-xs uppercase">Cancelar</button>
+           <button id="save-form-btn" class="bg-gold text-[#001f3f] px-8 py-3 rounded-xl font-900 uppercase text-xs">Salvar</button>
+       </div>
+       <div class="space-y-6">
           <div class="text-center">
-            <div id="photo-preview" class="w-28 h-28 bg-gray-100 rounded-full mx-auto flex items-center justify-center overflow-hidden border-2 border-dashed border-blue-200">+</div>
+            <div id="photo-preview" class="w-32 h-32 bg-white/5 rounded-full mx-auto flex items-center justify-center overflow-hidden border-2 border-dashed border-gold/30 text-gold shadow-2xl">+</div>
             <input type="file" id="photo-input" accept="image/*" class="hidden">
-            <button onclick="$('photo-input').click()" class="text-blue-600 text-xs mt-2 font-bold uppercase">Foto do Obreiro</button>
+            <button onclick="$('photo-input').click()" class="text-gold text-[10px] mt-4 font-bold uppercase tracking-widest bg-gold/10 px-4 py-2 rounded-full">Carregar Foto</button>
           </div>
-          <input id="input-nome" type="text" placeholder="Nome Completo" class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
-          <select id="input-cargo" class="w-full p-3 bg-gray-50 border rounded-xl">
-             <option>Pastor</option><option>Evangelista</option><option>Presbítero</option><option>Diácono</option><option>Missionária</option>
-          </select>
-          <input id="input-campo" type="text" placeholder="Campo / Setor" class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
-          <input id="input-conjuge" type="text" placeholder="Cônjuge" class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
+          <div class="space-y-4">
+              <input id="input-nome" type="text" placeholder="Nome Completo" class="w-full p-4 bg-white/5 border border-gold/10 rounded-2xl outline-none focus:border-gold text-white uppercase">
+              
+              <select id="input-cargo" class="w-full p-4 bg-white/10 border border-gold/20 rounded-2xl text-gold outline-none">
+                <option value="Pastor">Pastor</option>
+                <option value="Evangelista">Evangelista</option>
+                <option value="Presbítero">Presbítero</option>
+                <option value="Diácono">Diácono</option>
+                <option value="Missionária">Missionária</option>
+              </select>
+              
+              <input id="input-campo" type="text" placeholder="Campo / Setor / Congregação" class="w-full p-4 bg-white/5 border border-gold/10 rounded-2xl outline-none focus:border-gold text-white uppercase">
+              
+              <input id="input-conjuge" type="text" placeholder="Nome do Cônjuge" class="w-full p-4 bg-white/5 border border-gold/10 rounded-2xl outline-none focus:border-gold text-white uppercase">
+          </div>
        </div>
     </section>
 
-    <section id="profile-view" class="hidden h-full bg-white flex flex-col"></section>
+    <section id="profile-view" class="hidden h-full bg-[#001f3f] flex flex-col"></section>
   </main>
   
-  <footer class="bg-white p-4 border-t text-center"><button id="admin-link" class="text-blue-400 text-[9px] font-bold uppercase tracking-widest">Acesso Administrativo</button></footer>
+  <footer class="bg-[#001f3f] p-6 border-t border-gold/10 text-center">
+      <button id="admin-link" class="text-gold/40 text-[9px] font-bold uppercase tracking-[4px]">Acesso Administrativo</button>
+  </footer>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -96,7 +130,6 @@ let photoBase64 = "";
 let editingId = null;
 const $ = (id) => document.getElementById(id);
 
-// --- INICIALIZAÇÃO ---
 function startApp() {
   db.collection("obreiro").onSnapshot(snap => {
     const raw = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -111,50 +144,61 @@ function startApp() {
   });
 }
 
-// Inicia o App automaticamente ao carregar a página
 window.onload = startApp;
 
-// --- FUNÇÕES DE NAVEGAÇÃO ---
 function showView(v){ ["public","login","admin","form","profile"].forEach(s => $(`${s}-view`).classList.add("hidden")); $(`${v}-view`).classList.remove("hidden"); }
 $("admin-link").onclick = () => showView(isAdmin ? "admin" : "login");
 $("login-btn").onclick = () => { if($("admin-password").value.toUpperCase() === ADMIN_PASS) { isAdmin=true; showView("admin"); } else alert("Senha incorreta!"); };
 
-// --- LISTAGEM PÚBLICA ---
 function renderPublicList(q="") {
   const container = $("members-list").querySelector("div");
   const filtered = members.filter(m => m.nome.toLowerCase().includes(q.toLowerCase()) || m.cargo.toLowerCase().includes(q.toLowerCase()) || (m.campo && m.campo.toLowerCase().includes(q.toLowerCase())));
   container.innerHTML = filtered.map(m => `
-    <div onclick="showProfile('${m.id}')" class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 flex items-center gap-4 active:scale-95 transition-all">
-      ${m.foto ? `<img src="${m.foto}" class="w-14 h-14 rounded-full object-cover">` : `<div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 font-bold">${m.nome[0]}</div>`}
+    <div onclick="showProfile('${m.id}')" class="bg-white/5 p-5 rounded-2xl border border-gold/10 flex items-center gap-4 active:scale-95 transition-all shadow-xl">
+      ${m.foto ? `<img src="${m.foto}" class="w-14 h-14 rounded-full object-cover border-2 border-gold/30 shadow-lg">` : `<div class="w-14 h-14 bg-gold/10 rounded-full flex items-center justify-center text-gold text-lg font-black border border-gold/20">${m.nome[0]}</div>`}
       <div>
-        <p class="font-bold text-gray-800 text-sm">${m.nome}</p>
-        <p class="text-[9px] text-blue-600 font-bold uppercase">${m.cargo} • ${m.campo || 'SEDE'}</p>
+        <p class="font-bold text-white text-sm uppercase tracking-tight">${m.nome}</p>
+        <p class="text-[9px] text-gold font-bold uppercase tracking-widest mt-1 opacity-70">${m.cargo} • ${m.campo || 'SEDE'}</p>
       </div>
+      <i class="fas fa-chevron-right ml-auto text-gold/20 text-xs"></i>
     </div>
   `).join("");
-  $("member-count").textContent = filtered.length + " Obreiros";
+  $("member-count").textContent = filtered.length + " Obreiros Cadastrados";
 }
 
-// --- FICHA DO OBREIRO ---
 function showProfile(id) {
   const m = members.find(x => x.id === id);
   $("profile-view").innerHTML = `
-    <div class="bg-blue-600 text-white p-4 flex items-center gap-4 shadow-lg"><button onclick="showView('public')" class="p-2">← Voltar</button></div>
+    <div class="p-6 flex items-center border-b border-gold/10">
+        <button onclick="showView('public')" class="text-gold text-sm font-bold"><i class="fas fa-chevron-left mr-2"></i> VOLTAR</button>
+    </div>
     <div class="flex-1 overflow-auto">
-      <div class="p-8 text-center bg-gradient-to-b from-blue-50 to-white">
-        ${m.foto ? `<img src="${m.foto}" class="w-40 h-40 rounded-full mx-auto shadow-2xl border-4 border-white object-cover">` : `<div class="w-40 h-40 bg-blue-100 mx-auto rounded-full"></div>`}
-        <h2 class="text-2xl font-bold mt-4 text-gray-800">${m.nome}</h2>
-        <div class="bg-blue-600 text-white px-6 py-2 rounded-full inline-block text-xs mt-3 uppercase font-black tracking-widest">${m.cargo}</div>
+      <div class="p-10 text-center">
+        ${m.foto ? `<img src="${m.foto}" class="w-40 h-40 rounded-full mx-auto shadow-[0_0_30px_rgba(212,175,55,0.2)] border-4 border-gold/20 object-cover">` : `<div class="w-40 h-40 bg-gold/10 mx-auto rounded-full flex items-center justify-center text-gold text-5xl font-black border border-gold/20">${m.nome[0]}</div>`}
+        <h2 class="text-2xl font-800 mt-6 text-white uppercase tracking-tighter leading-tight">${m.nome}</h2>
+        <div class="bg-gold text-[#001f3f] px-6 py-2 rounded-full inline-block text-[10px] mt-4 uppercase font-black tracking-widest shadow-lg">${m.cargo}</div>
       </div>
-      <div class="px-6 space-y-4 pb-10">
-        <div class="bg-gray-50 p-5 rounded-3xl border border-gray-100"><p class="text-[10px] text-gray-400 font-bold uppercase">Campo / Setor</p><p class="font-bold text-blue-800 text-lg">${m.campo || 'SEDE'}</p></div>
-        <div class="bg-blue-50 p-5 rounded-3xl border border-blue-100"><p class="text-[10px] text-blue-400 font-bold uppercase">Cônjuge</p><p class="font-bold text-gray-800">${m.conjuge || '---'}</p></div>
+      <div class="px-8 space-y-4 pb-12">
+        <div class="bg-white/5 p-6 rounded-3xl border border-gold/10 text-center">
+            <p class="text-[9px] text-gold/50 font-black uppercase tracking-[3px] mb-2">Congregação / Campo</p>
+            <p class="font-bold text-white text-lg">${m.campo || 'SEDE'}</p>
+        </div>
+        <div class="bg-white/5 p-6 rounded-3xl border border-gold/10 text-center">
+            <p class="text-[9px] text-gold/50 font-black uppercase tracking-[3px] mb-2">Cônjuge</p>
+            <p class="font-bold text-white text-lg">${m.conjuge || '---'}</p>
+        </div>
       </div>
     </div>`;
   showView("profile");
 }
 
-// --- ADMINISTRAÇÃO ---
+function openAddForm() {
+    editingId = null;
+    $("input-nome").value = ""; $("input-campo").value = ""; $("input-conjuge").value = "";
+    photoBase64 = ""; $("photo-preview").innerHTML = "+";
+    showView('form');
+}
+
 window.editMember = (id) => {
   const m = members.find(x => x.id === id); editingId = id;
   $("input-nome").value = m.nome; $("input-cargo").value = m.cargo;
@@ -164,31 +208,45 @@ window.editMember = (id) => {
 };
 
 $("save-form-btn").onclick = async () => {
-  const data = { nome: $("input-nome").value.toUpperCase(), cargo: $("input-cargo").value, campo: $("input-campo").value.toUpperCase(), conjuge: $("input-conjuge").value.toUpperCase(), foto: photoBase64 };
+  const data = { 
+    nome: $("input-nome").value.toUpperCase(), 
+    cargo: $("input-cargo").value, 
+    campo: $("input-campo").value.toUpperCase(), 
+    conjuge: $("input-conjuge").value.toUpperCase(), 
+    foto: photoBase64 
+  };
+  if(!data.nome) return alert("Digite o nome!");
+  $("save-form-btn").innerText = "SALVANDO...";
   if(editingId) await db.collection("obreiro").doc(editingId).update(data);
   else await db.collection("obreiro").add(data);
+  $("save-form-btn").innerText = "SALVAR";
   showView("admin");
 };
 
 function renderAdminList() {
   $("admin-members-list").innerHTML = members.map(m => `
-    <div class="bg-white p-3 rounded-xl border flex justify-between items-center shadow-sm">
-      <span class="text-xs font-bold">${m.nome.split(' ')[0]}... (${m.cargo})</span>
-      <div class="flex gap-2"><button onclick="editMember('${m.id}')" class="p-2">✏️</button><button onclick="deleteMember('${m.id}')" class="p-2">🗑️</button></div>
+    <div class="bg-white/5 p-4 rounded-xl border border-gold/10 flex justify-between items-center shadow-lg">
+      <div class="flex flex-col">
+          <span class="text-[11px] font-bold text-white uppercase">${m.nome.split(' ')[0]}...</span>
+          <span class="text-[9px] text-gold/50 font-bold uppercase">${m.cargo}</span>
+      </div>
+      <div class="flex gap-1">
+          <button onclick="editMember('${m.id}')" class="p-3 text-gold/60"><i class="fas fa-edit"></i></button>
+          <button onclick="deleteMember('${m.id}')" class="p-3 text-red-400/60"><i class="fas fa-trash-alt"></i></button>
+      </div>
     </div>
   `).join("");
 }
 
 window.deleteMember = async (id) => { if(confirm("Apagar permanentemente?")) await db.collection("obreiro").doc(id).delete(); };
 
-// --- COMPRESSÃO DE IMAGEM ---
 $("photo-input").onchange = (e) => {
   const reader = new FileReader();
   reader.onload = (ev) => {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement("canvas");
-      let width = 300; let scale = width / img.width;
+      let width = 400; let scale = width / img.width;
       canvas.width = width; canvas.height = img.height * scale;
       const ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
