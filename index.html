@@ -10,86 +10,73 @@
   body{font-family:'Inter',sans-serif;}
   .scrollbar-hide::-webkit-scrollbar{display:none}
   .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
-  .gate-gradient { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
 </style>
 </head>
 <body class="bg-blue-50 h-full">
 
-<div id="gatekeeper-view" class="fixed inset-0 gate-gradient z-[100] flex items-center justify-center px-4">
-  <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
-    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-      <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-    </div>
-    <h2 class="text-2xl font-bold text-gray-800 mb-2">Acesso Restrito</h2>
-    <input id="gate-key" type="password" placeholder="Chave de Acesso" class="w-full px-4 py-3 bg-gray-100 border-2 border-transparent focus:border-blue-500 rounded-xl text-center font-bold tracking-widest outline-none mb-4 transition-all">
-    <button id="unlock-btn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition">Entrar</button>
-    <p id="gate-error" class="hidden text-red-500 text-xs mt-3 font-medium">Chave incorreta!</p>
-  </div>
-</div>
-
-<div id="app" class="hidden h-full w-full flex flex-col overflow-hidden">
-  <header class="bg-blue-600 text-white px-4 py-4 shadow-lg flex-shrink-0 z-20">
-    <div class="max-w-lg mx-auto flex justify-between items-center">
-      <div>
-        <h1 class="text-xl font-bold tracking-tight">QOBT</h1>
-        <p class="text-blue-100 text-[10px] uppercase font-bold tracking-widest">Tapauá - AM</p>
-      </div>
-      <button onclick="location.reload()" class="bg-blue-500 p-2 rounded-lg text-white text-xs">Sair</button>
+<div id="app" class="h-full w-full flex flex-col overflow-hidden">
+  <header class="bg-blue-600 text-white px-4 py-4 shadow-lg flex-shrink-0 z-20 text-center">
+    <div class="max-w-lg mx-auto">
+      <h1 class="text-xl font-bold tracking-tight">LISTA DE OBREIROS</h1>
+      <p class="text-blue-100 text-[10px] uppercase font-bold tracking-widest">LISTA DE OBREIROS • TAPAUÁ</p>
     </div>
   </header>
 
   <main class="flex-1 overflow-auto scrollbar-hide">
     <section id="public-view" class="h-full flex flex-col">
       <div class="px-4 py-3 bg-white border-b sticky top-0 z-10">
-        <input type="text" id="search-input" placeholder="Buscar obreiro, cargo ou campo..." class="w-full px-4 py-2.5 bg-gray-100 rounded-xl text-sm outline-none border-2 border-transparent focus:border-blue-200">
+        <input type="text" id="search-input" placeholder="Buscar por nome, cargo ou campo..." class="w-full px-4 py-2.5 bg-gray-100 rounded-xl text-sm outline-none border-2 border-transparent focus:border-blue-200">
         <p id="member-count" class="text-[10px] text-blue-500 mt-2 text-center font-bold uppercase"></p>
       </div>
       <div id="members-list" class="flex-1 px-4 py-4"><div class="max-w-lg mx-auto space-y-3"></div></div>
     </section>
 
-    <section id="admin-view" class="hidden h-full bg-gray-50 flex flex-col">
-       <div class="p-4 bg-gray-800 text-white flex justify-between"><span class="font-bold">PAINEL ADM</span><button onclick="showView('public')">Voltar</button></div>
-       <div id="admin-members-list" class="p-4 space-y-2 overflow-auto"></div>
+    <section id="login-view" class="hidden h-full flex items-center justify-center px-4">
+      <div class="bg-white max-w-xs w-full p-6 rounded-3xl shadow-xl border text-center">
+        <h2 class="font-bold mb-4 uppercase">Painel Administrativo</h2>
+        <input id="admin-password" type="password" placeholder="Digite a Senha ADM" class="w-full px-4 py-3 bg-gray-100 rounded-xl text-center mb-3 outline-none border-2 border-transparent focus:border-blue-600">
+        <button id="login-btn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">Entrar</button>
+        <button onclick="showView('public')" class="w-full text-gray-400 text-xs mt-4">VOLTAR PARA A LISTA</button>
+      </div>
+    </section>
+
+    <section id="admin-view" class="hidden h-full flex flex-col bg-gray-50">
+      <div class="px-4 py-3 bg-gray-800 text-white flex justify-between items-center">
+        <span class="font-bold text-sm">GERENCIAR</span>
+        <button onclick="isAdmin=false;showView('public')" class="text-xs bg-red-600 px-3 py-1 rounded-lg">Sair</button>
+      </div>
+      <div class="flex-1 overflow-auto p-4">
+        <div id="admin-members-list" class="max-w-lg mx-auto space-y-2"></div>
+      </div>
     </section>
 
     <section id="form-view" class="hidden h-full bg-white flex flex-col p-4">
-       <div class="flex justify-between mb-4"><button onclick="showView('admin')" class="text-gray-500 font-bold">Cancelar</button><button id="save-form-btn" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold">SALVAR</button></div>
-       <div class="flex-1 overflow-auto">
-         <div class="text-center mb-6">
-            <div id="photo-preview" class="w-28 h-28 bg-gray-100 rounded-full mx-auto flex items-center justify-center overflow-hidden border-2 border-dashed border-blue-200 text-blue-300 text-3xl">+</div>
+       <div class="flex justify-between mb-4"><button onclick="showView('admin')" class="text-gray-500">Cancelar</button><button id="save-form-btn" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold">SALVAR</button></div>
+       <div class="flex-1 overflow-auto space-y-4">
+          <div class="text-center">
+            <div id="photo-preview" class="w-28 h-28 bg-gray-100 rounded-full mx-auto flex items-center justify-center overflow-hidden border-2 border-dashed border-blue-200">+</div>
             <input type="file" id="photo-input" accept="image/*" class="hidden">
-            <button onclick="$('photo-input').click()" class="text-blue-600 text-xs mt-2 font-bold uppercase">Alterar Foto</button>
-         </div>
-         <div class="space-y-4">
-            <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Nome Completo</label><input id="input-nome" type="text" class="w-full p-3 bg-gray-50 border rounded-xl outline-none focus:border-blue-500"></div>
-            <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Cargo</label><select id="input-cargo" class="w-full p-3 bg-gray-50 border rounded-xl outline-none focus:border-blue-500">
-               <option>Pastor</option><option>Evangelista</option><option>Presbítero</option><option>Diácono</option><option>Missionária</option>
-            </select></div>
-            <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Campo / Setor (Ex: Sede)</label><input id="input-campo" type="text" placeholder="Ex: SEDE" class="w-full p-3 bg-gray-50 border rounded-xl outline-none focus:border-blue-500"></div>
-            <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Nome do Cônjuge</label><input id="input-conjuge" type="text" class="w-full p-3 bg-gray-50 border rounded-xl outline-none focus:border-blue-500"></div>
-         </div>
+            <button onclick="$('photo-input').click()" class="text-blue-600 text-xs mt-2 font-bold uppercase">Foto do Obreiro</button>
+          </div>
+          <input id="input-nome" type="text" placeholder="Nome Completo" class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
+          <select id="input-cargo" class="w-full p-3 bg-gray-50 border rounded-xl">
+             <option>Pastor</option><option>Evangelista</option><option>Presbítero</option><option>Diácono</option><option>Missionária</option>
+          </select>
+          <input id="input-campo" type="text" placeholder="Campo / Setor" class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
+          <input id="input-conjuge" type="text" placeholder="Cônjuge" class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
        </div>
     </section>
 
     <section id="profile-view" class="hidden h-full bg-white flex flex-col"></section>
-    
-    <section id="login-view" class="hidden h-full flex items-center justify-center p-4">
-      <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-xs text-center">
-        <h2 class="font-bold mb-4">ACESSO ADM</h2>
-        <input id="admin-password" type="password" placeholder="Senha" class="w-full p-3 bg-gray-100 rounded-xl mb-4 text-center outline-none">
-        <button id="login-btn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">Entrar</button>
-      </div>
-    </section>
   </main>
   
-  <footer class="bg-white p-4 border-t text-center"><button id="admin-link" class="text-blue-600 text-[10px] font-bold uppercase">Gerenciar Obreiros</button></footer>
+  <footer class="bg-white p-4 border-t text-center"><button id="admin-link" class="text-blue-400 text-[9px] font-bold uppercase tracking-widest">Acesso Administrativo</button></footer>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
-const CHURCH_KEY = "TAPAUA2026";
 const ADMIN_PASS = "IGREJA2026";
 
 const firebaseConfig = {
@@ -109,6 +96,7 @@ let photoBase64 = "";
 let editingId = null;
 const $ = (id) => document.getElementById(id);
 
+// --- INICIALIZAÇÃO ---
 function startApp() {
   db.collection("obreiro").onSnapshot(snap => {
     const raw = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -123,39 +111,80 @@ function startApp() {
   });
 }
 
-async function checkAndSeed() {
-  const snapshot = await db.collection("obreiro").limit(1).get();
-  if (snapshot.empty) {
-    const obreiros = [
-      {m:"ADINO FILHO GOMES RODRIGUES", e:"ELDA DE SOUZA RODRIGUES", c:"Pastor"},
-      {m:"CALISTHENYS DE SOUZA RODRIGUES", e:"SHEYLA DE OLIVEIRA RODRIGUES", c:"Pastor"},
-      {m:"ALTAIR SOARES DA SILVA", e:"ELIANA BORGES DA SILVA", c:"Pastor"},
-      {m:"ARNALDO SABINO DE ARAÚJO", e:"ESTHER CHAVES DE ARAÚJO", c:"Pastor"},
-      {m:"DANIEL VIEIRA BATALHA", e:"LUCINEIA DOS SANTOS BATALHA", c:"Pastor"},
-      {m:"NATANAEL SOUZA BATISTA", e:"RAIMUNDA NONATA ALVINO DE SOUZA", c:"Pastor"},
-      {m:"RONILDO DOS SANTOS AUZIER", e:"MISLANE DOS SANTOS COSTA AUZIER", c:"Evangelista"},
-      {m:"ROBERTO DOS SANTOS CAMPOS", e:"JUSLEY GAMA DE MOURA", c:"Evangelista"},
-      {m:"ERLANE DE OLIVEIRA TAVARES", e:"MARIA ILCICLEIDE CRAVEIRO GAMA", c:"Evangelista"},
-      {m:"ADAIDO LIMA DE OLIVEIRA", e:"MARIZETE TEIXEIRA DA MATA", c:"Evangelista"},
-      {m:"GILBERTO COSTA VIEIRA", e:"MARIA DOS SANTOS VIEIRA", c:"Evangelista"},
-      {m:"LUIS CLAUDIO BARBOSA DE OLIVEIRA", e:"MARIA APARECIDA BARBOSA DE OLIVEIRA", c:"Evangelista"},
-      {m:"JEDSON PINHEIRO DUARTE", e:"FRANCISJANE SILVA BELEZA", c:"Presbítero"},
-      {m:"ANTONIO TAVARES FERREIRA FILHO", e:"KARINA FIRMINO DA COSTA", c:"Presbítero"},
-      {m:"ROBSON FONSECA TAVARES", e:"LUZINEIA GOMES TAVARES", c:"Presbítero"}
-    ];
-    for(let o of obreiros) {
-      await db.collection("obreiro").add({nome: o.m, cargo: o.c, conjuge: o.e, campo:"SEDE", foto:""});
-      await db.collection("obreiro").add({nome: o.e, cargo: "Missionária", conjuge: o.m, campo:"SEDE", foto:""});
-    }
-    const diaconos = ["MARCOS MICAIAS DE SOUZA RODRIGUES", "SEBASTIÃO CORRÊA", "ANTONIO CARLOS CARVALHO DE OLIVEIRA", "EDVALDO ABILIO DA SILVA"];
-    for(let d of diaconos) await db.collection("obreiro").add({nome: d, cargo: "Diácono", conjuge: "", campo:"SEDE", foto:""});
-  }
+// Inicia o App automaticamente ao carregar a página
+window.onload = startApp;
+
+// --- FUNÇÕES DE NAVEGAÇÃO ---
+function showView(v){ ["public","login","admin","form","profile"].forEach(s => $(`${s}-view`).classList.add("hidden")); $(`${v}-view`).classList.remove("hidden"); }
+$("admin-link").onclick = () => showView(isAdmin ? "admin" : "login");
+$("login-btn").onclick = () => { if($("admin-password").value.toUpperCase() === ADMIN_PASS) { isAdmin=true; showView("admin"); } else alert("Senha incorreta!"); };
+
+// --- LISTAGEM PÚBLICA ---
+function renderPublicList(q="") {
+  const container = $("members-list").querySelector("div");
+  const filtered = members.filter(m => m.nome.toLowerCase().includes(q.toLowerCase()) || m.cargo.toLowerCase().includes(q.toLowerCase()) || (m.campo && m.campo.toLowerCase().includes(q.toLowerCase())));
+  container.innerHTML = filtered.map(m => `
+    <div onclick="showProfile('${m.id}')" class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 flex items-center gap-4 active:scale-95 transition-all">
+      ${m.foto ? `<img src="${m.foto}" class="w-14 h-14 rounded-full object-cover">` : `<div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 font-bold">${m.nome[0]}</div>`}
+      <div>
+        <p class="font-bold text-gray-800 text-sm">${m.nome}</p>
+        <p class="text-[9px] text-blue-600 font-bold uppercase">${m.cargo} • ${m.campo || 'SEDE'}</p>
+      </div>
+    </div>
+  `).join("");
+  $("member-count").textContent = filtered.length + " Obreiros";
 }
 
-// Lógica de Foto (Compressão)
-function processImage(file) {
+// --- FICHA DO OBREIRO ---
+function showProfile(id) {
+  const m = members.find(x => x.id === id);
+  $("profile-view").innerHTML = `
+    <div class="bg-blue-600 text-white p-4 flex items-center gap-4 shadow-lg"><button onclick="showView('public')" class="p-2">← Voltar</button></div>
+    <div class="flex-1 overflow-auto">
+      <div class="p-8 text-center bg-gradient-to-b from-blue-50 to-white">
+        ${m.foto ? `<img src="${m.foto}" class="w-40 h-40 rounded-full mx-auto shadow-2xl border-4 border-white object-cover">` : `<div class="w-40 h-40 bg-blue-100 mx-auto rounded-full"></div>`}
+        <h2 class="text-2xl font-bold mt-4 text-gray-800">${m.nome}</h2>
+        <div class="bg-blue-600 text-white px-6 py-2 rounded-full inline-block text-xs mt-3 uppercase font-black tracking-widest">${m.cargo}</div>
+      </div>
+      <div class="px-6 space-y-4 pb-10">
+        <div class="bg-gray-50 p-5 rounded-3xl border border-gray-100"><p class="text-[10px] text-gray-400 font-bold uppercase">Campo / Setor</p><p class="font-bold text-blue-800 text-lg">${m.campo || 'SEDE'}</p></div>
+        <div class="bg-blue-50 p-5 rounded-3xl border border-blue-100"><p class="text-[10px] text-blue-400 font-bold uppercase">Cônjuge</p><p class="font-bold text-gray-800">${m.conjuge || '---'}</p></div>
+      </div>
+    </div>`;
+  showView("profile");
+}
+
+// --- ADMINISTRAÇÃO ---
+window.editMember = (id) => {
+  const m = members.find(x => x.id === id); editingId = id;
+  $("input-nome").value = m.nome; $("input-cargo").value = m.cargo;
+  $("input-campo").value = m.campo || ""; $("input-conjuge").value = m.conjuge || "";
+  photoBase64 = m.foto || ""; $("photo-preview").innerHTML = photoBase64 ? `<img src="${photoBase64}" class="w-full h-full object-cover">` : "+";
+  showView("form");
+};
+
+$("save-form-btn").onclick = async () => {
+  const data = { nome: $("input-nome").value.toUpperCase(), cargo: $("input-cargo").value, campo: $("input-campo").value.toUpperCase(), conjuge: $("input-conjuge").value.toUpperCase(), foto: photoBase64 };
+  if(editingId) await db.collection("obreiro").doc(editingId).update(data);
+  else await db.collection("obreiro").add(data);
+  showView("admin");
+};
+
+function renderAdminList() {
+  $("admin-members-list").innerHTML = members.map(m => `
+    <div class="bg-white p-3 rounded-xl border flex justify-between items-center shadow-sm">
+      <span class="text-xs font-bold">${m.nome.split(' ')[0]}... (${m.cargo})</span>
+      <div class="flex gap-2"><button onclick="editMember('${m.id}')" class="p-2">✏️</button><button onclick="deleteMember('${m.id}')" class="p-2">🗑️</button></div>
+    </div>
+  `).join("");
+}
+
+window.deleteMember = async (id) => { if(confirm("Apagar permanentemente?")) await db.collection("obreiro").doc(id).delete(); };
+
+// --- COMPRESSÃO DE IMAGEM ---
+$("photo-input").onchange = (e) => {
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = (ev) => {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement("canvas");
@@ -166,93 +195,11 @@ function processImage(file) {
       photoBase64 = canvas.toDataURL("image/jpeg", 0.7);
       $("photo-preview").innerHTML = `<img src="${photoBase64}" class="w-full h-full object-cover">`;
     };
-    img.src = e.target.result;
+    img.src = ev.target.result;
   };
-  reader.readAsDataURL(file);
-}
-
-$("photo-input").onchange = (e) => { if(e.target.files[0]) processImage(e.target.files[0]); };
-
-$("save-form-btn").onclick = async () => {
-  const data = { 
-    nome: $("input-nome").value.toUpperCase(), 
-    cargo: $("input-cargo").value, 
-    campo: $("input-campo").value.toUpperCase() || "SEDE",
-    conjuge: $("input-conjuge").value.toUpperCase(), 
-    foto: photoBase64 
-  };
-  if(editingId) await db.collection("obreiro").doc(editingId).update(data);
-  else await db.collection("obreiro").add(data);
-  showView("admin");
+  reader.readAsDataURL(e.target.files[0]);
 };
 
-function renderPublicList(q="") {
-  const container = $("members-list").querySelector("div");
-  const filtered = members.filter(m => 
-    m.nome.toLowerCase().includes(q.toLowerCase()) || 
-    m.cargo.toLowerCase().includes(q.toLowerCase()) ||
-    (m.campo && m.campo.toLowerCase().includes(q.toLowerCase()))
-  );
-  container.innerHTML = filtered.map(m => `
-    <div onclick="showProfile('${m.id}')" class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50 flex items-center gap-4 active:scale-95 transition-all">
-      ${m.foto ? `<img src="${m.foto}" class="w-14 h-14 rounded-full object-cover">` : `<div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 font-bold">${m.nome[0]}</div>`}
-      <div>
-        <p class="font-bold text-gray-800 text-sm">${m.nome}</p>
-        <p class="text-[9px] text-blue-600 font-bold uppercase">${m.cargo} • ${m.campo || 'SEDE'}</p>
-      </div>
-    </div>
-  `).join("");
-  $("member-count").textContent = filtered.length + " Registrados";
-}
-
-function showProfile(id) {
-  const m = members.find(x => x.id === id);
-  $("profile-view").innerHTML = `
-    <div class="bg-blue-600 text-white p-4 flex items-center gap-4 shadow-lg"><button onclick="showView('public')" class="p-2">← Voltar</button></div>
-    <div class="flex-1 overflow-auto">
-      <div class="p-8 text-center bg-gradient-to-b from-blue-50 to-white">
-        ${m.foto ? `<img src="${m.foto}" class="w-40 h-40 rounded-full mx-auto shadow-2xl border-4 border-white object-cover">` : `<div class="w-40 h-40 bg-blue-100 mx-auto rounded-full"></div>`}
-        <h2 class="text-2xl font-bold mt-4 text-gray-800">${m.nome}</h2>
-        <div class="bg-blue-600 text-white px-6 py-2 rounded-full inline-block text-xs mt-3 uppercase font-black">${m.cargo}</div>
-      </div>
-      <div class="px-6 space-y-4 pb-10">
-        <div class="bg-gray-50 p-5 rounded-3xl border border-gray-100">
-          <p class="text-[10px] text-gray-400 font-bold uppercase">Campo de Atuação</p>
-          <p class="font-bold text-blue-800 text-lg">${m.campo || 'SEDE'}</p>
-        </div>
-        <div class="bg-blue-50 p-5 rounded-3xl border border-blue-100">
-          <p class="text-[10px] text-blue-400 font-bold uppercase">Cônjuge</p>
-          <p class="font-bold text-gray-800">${m.conjuge || 'SOLTEIRO(A)'}</p>
-        </div>
-      </div>
-    </div>`;
-  showView("profile");
-}
-
-// Funções de ADM
-$("unlock-btn").onclick = async () => {
-  if($("gate-key").value.toUpperCase() === CHURCH_KEY) { $("gatekeeper-view").classList.add("hidden"); $("app").classList.remove("hidden"); await checkAndSeed(); startApp(); }
-  else $("gate-error").classList.remove("hidden");
-};
-$("admin-link").onclick = () => showView(isAdmin ? "admin" : "login");
-$("login-btn").onclick = () => { if($("admin-password").value.toUpperCase() === ADMIN_PASS) { isAdmin=true; showView("admin"); } else alert("Erro!"); };
-window.editMember = (id) => {
-  const m = members.find(x => x.id === id); editingId = id;
-  $("input-nome").value = m.nome; $("input-cargo").value = m.cargo;
-  $("input-campo").value = m.campo || ""; $("input-conjuge").value = m.conjuge || "";
-  photoBase64 = m.foto || ""; $("photo-preview").innerHTML = photoBase64 ? `<img src="${photoBase64}" class="w-full h-full object-cover">` : "+";
-  showView("form");
-};
-window.deleteMember = async (id) => { if(confirm("Apagar?")) await db.collection("obreiro").doc(id).delete(); };
-function renderAdminList() {
-  $("admin-members-list").innerHTML = members.map(m => `
-    <div class="bg-white p-3 rounded-xl border flex justify-between items-center shadow-sm">
-      <span class="text-xs font-bold">${m.nome.split(' ')[0]}... (${m.cargo})</span>
-      <div class="flex gap-2"><button onclick="editMember('${m.id}')" class="p-2">✏️</button><button onclick="deleteMember('${m.id}')" class="p-2">🗑️</button></div>
-    </div>
-  `).join("");
-}
-function showView(v){ ["public","login","admin","form","profile"].forEach(s => $(`${s}-view`).classList.add("hidden")); $(`${v}-view`).classList.remove("hidden"); }
 $("search-input").oninput = (e) => renderPublicList(e.target.value);
 </script>
 </body>
