@@ -299,6 +299,8 @@ function showView(v){
   views.forEach(s => $(`${s}-view`).classList.add("hidden"));
   $(`${v}-view`).classList.remove("hidden");
 }
+// Exibe view inicial
+showView("public");
 
 // ======================
 // 📌 TOAST
@@ -560,5 +562,10 @@ function showProfile(id){
   `;
   showView("profile");
 }
+// Deixa funções acessíveis no HTML (eventos inline)
+window.showView = showView;
+window.editMember = editMember;
+window.confirmDelete = confirmDelete;
+window.showProfile = showProfile;
 </script>
 
