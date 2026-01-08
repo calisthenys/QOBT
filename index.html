@@ -1,572 +1,170 @@
-<!doctype html>
-<html lang="pt-BR" class="h-full">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>QOBT - Quadro de Obreiros</title>
 
-<!-- TAILWIND -->
+<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- FONT -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
-body{font-family:'Inter',sans-serif;}
-.fade-in{animation:fadeIn .3s ease-out}@keyframes fadeIn{from{opacity:.2;transform:translateY(8px)}to{opacity:1}}
-.scrollbar-hide::-webkit-scrollbar{display:none}
-.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
+body { font-family: Arial, sans-serif; }
+.hidden { display: none !important; }
 </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 via-white to-blue-50 h-full">
-<div id="app" class="h-full w-full flex flex-col overflow-hidden">
+<body class="bg-blue-50 min-h-screen flex flex-col">
 
-<!-- HEADER -->
-<header id="main-header" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-4 shadow-lg flex-shrink-0">
-  <div class="max-w-lg mx-auto">
-    <h1 class="text-xl font-bold tracking-tight">QOBT</h1>
-    <p class="text-blue-100 text-xs mt-0.5">Quadro de Obreiros Belemita de Tapauá</p>
-  </div>
+<header class="bg-blue-600 text-white p-4 text-center shadow">
+  <h1 class="text-xl font-bold">QOBT</h1>
+  <p class="text-sm">Quadro de Obreiros Belemita de Tapauá</p>
 </header>
 
-<main id="main-content" class="flex-1 overflow-auto scrollbar-hide">
-<!-- PUBLIC VIEW -->
-<section id="public-view" class="h-full flex flex-col">
-  <div class="px-4 py-3 bg-white border-b border-blue-100 sticky top-0 z-10">
-    <div class="max-w-lg mx-auto">
-      <input type="text" id="search-input"
-        placeholder="Buscar obreiro..."
-        class="w-full pl-3 pr-4 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-sm placeholder-blue-400 focus:bg-white">
+<main class="flex-1 p-4">
+
+  <!-- PUBLIC -->
+  <section id="public-view">
+    <input id="search-input" placeholder="Buscar obreiro..." class="w-full p-2 border rounded mb-4">
+    <p id="member-count" class="text-xs mb-2"></p>
+    <div id="members-list" class="space-y-2"></div>
+    <p id="empty-state" class="text-center text-gray-500 hidden">Nenhum obreiro encontrado</p>
+  </section>
+
+  <!-- LOGIN -->
+  <section id="login-view" class="hidden">
+    <div class="max-w-xs mx-auto bg-white p-4 shadow rounded">
+      <h2 class="font-semibold text-center mb-2">Área Administrativa</h2>
+      <input id="admin-password" type="password"
+             placeholder="Senha" class="w-full p-2 border rounded text-center">
+      <p id="login-error" class="hidden text-red-500 text-xs mt-2 text-center">Senha incorreta</p>
+      <button id="login-btn" class="w-full mt-3 bg-blue-600 text-white p-2 rounded">Entrar</button>
+      <button id="back-from-login" class="w-full mt-2 text-blue-600 text-sm">← Voltar</button>
     </div>
-    <p id="member-count" class="text-xs text-blue-500 mt-2 text-center font-medium"></p>
-  </div>
+  </section>
 
-  <div id="members-list" class="flex-1 overflow-auto px-4 py-4">
-    <div class="max-w-lg mx-auto space-y-3"></div>
-  </div>
+  <!-- ADMIN -->
+  <section id="admin-view" class="hidden">
+    <button id="logout-btn" class="text-blue-600 mb-4">← Sair</button>
+    <button id="add-member-btn" class="w-full bg-blue-600 text-white p-2 rounded mb-4">Cadastrar Obreiro</button>
+    <div id="admin-members-list" class="space-y-2"></div>
+    <p id="admin-empty-state" class="hidden text-gray-500 text-center">Nenhum obreiro cadastrado</p>
+  </section>
 
-  <div id="empty-state" class="hidden flex-1 flex items-center justify-center px-4 text-center">
-    <p class="text-sm text-gray-500">Nenhum obreiro cadastrado</p>
-  </div>
-</section>
+  <!-- FORM -->
+  <section id="form-view" class="hidden">
+    <h2 id="form-title" class="font-semibold text-center mb-4">Novo Obreiro</h2>
+    <input id="input-nome" placeholder="Nome" class="w-full p-2 border rounded mb-2">
+    <input id="input-cargo" placeholder="Cargo" class="w-full p-2 border rounded mb-2">
+    <input id="input-setor" placeholder="Setor" class="w-full p-2 border rounded mb-2">
+    <input id="input-campo" placeholder="Campo" class="w-full p-2 border rounded mb-4">
+    <button id="save-form-btn" class="w-full bg-blue-600 text-white p-2 rounded mb-2">Salvar</button>
+    <button id="cancel-form-btn" class="w-full text-blue-600">Cancelar</button>
+  </section>
 
-<!-- PROFILE -->
-<section id="profile-view" class="hidden h-full flex flex-col bg-white">
-  <div id="profile-content" class="flex-1 overflow-auto max-w-lg mx-auto"></div>
-</section>
+</main>
 
-<!-- LOGIN -->
-<section id="login-view" class="hidden h-full flex items-center justify-center px-4">
-  <div class="bg-white max-w-xs w-full p-6 rounded-2xl shadow-lg border border-blue-100">
-    <h2 class="text-center text-lg font-semibold mb-4">Área Administrativa</h2>
-    <input id="admin-password" type="password"
-      placeholder="Senha"
-      class="w-full px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-center text-lg tracking-widest">
-    <p id="login-error" class="hidden text-red-500 text-xs mt-2 text-center">Senha incorreta</p>
-    <button id="login-btn" class="w-full btn-primary text-white py-3 rounded-xl font-semibold mt-3 bg-blue-600 hover:bg-blue-700">Entrar</button>
-    <button id="back-from-login" class="w-full text-blue-600 py-2 text-sm mt-2">← Voltar</button>
-  </div>
-</section>
-
-<!-- ADMIN PANEL -->
-<section id="admin-view" class="hidden h-full flex flex-col">
-  <div class="px-4 py-3 bg-blue-600 text-white">
-    <div class="max-w-lg mx-auto flex items-center justify-between">
-      <p class="font-semibold">Painel Administrativo</p>
-      <button id="logout-btn" class="text-blue-200 hover:text-white text-sm">Sair</button>
-    </div>
-  </div>
-
-  <div class="flex-1 overflow-auto px-4 py-4">
-    <div class="max-w-lg mx-auto space-y-4">
-      <button id="add-member-btn"
-        class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold">Cadastrar Novo Obreiro</button>
-      <div id="admin-members-list" class="space-y-3"></div>
-      <p id="admin-empty-state" class="hidden text-center text-gray-500">Nenhum obreiro cadastrado</p>
-    </div>
-  </div>
-</section>
-<!-- FORM (ADD/EDIT) -->
-<section id="form-view" class="hidden h-full flex flex-col bg-gray-50">
-  <div class="px-4 py-3 bg-white border-b border-gray-200 flex-shrink-0">
-    <div class="max-w-lg mx-auto flex items-center justify-between">
-      <button id="cancel-form-btn" class="text-blue-600 font-medium text-sm">Cancelar</button>
-      <h2 id="form-title" class="font-semibold text-gray-800">Novo Obreiro</h2>
-      <button id="save-form-btn" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium">Salvar</button>
-    </div>
-  </div>
-
-  <div class="flex-1 overflow-auto px-4 py-4">
-    <div class="max-w-lg mx-auto space-y-4">
-
-      <!-- FOTO -->
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <label class="block text-sm font-medium text-gray-700 mb-3">Foto do Obreiro</label>
-        <div class="flex items-center gap-4">
-          <div id="photo-preview"
-               class="w-20 h-20 rounded-full bg-blue-100 border-2 border-blue-200 flex items-center justify-center overflow-hidden">
-            <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-            </svg>
-          </div>
-          <div class="flex-1">
-            <input type="file" id="photo-input" accept="image/*" class="hidden">
-            <button id="upload-photo-btn"
-                    class="w-full bg-blue-50 text-blue-600 py-2 px-4 rounded-lg text-sm font-medium border border-blue-200">
-              Escolher Foto
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- CAMPOS -->
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nome Completo *</label>
-          <input id="input-nome" type="text"
-                 placeholder="Digite o nome completo"
-                 class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm">
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Cargo *</label>
-          <select id="input-cargo"
-                  class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm">
-            <option value="">Selecione o cargo</option>
-            <option>Pastor</option><option>Evangelista</option><option>Presbítero</option>
-            <option>Diácono</option><option>Cooperador</option><option>Auxiliar</option>
-          </select>
-        </div>
-
-        <!-- ESTADO CIVIL -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-3">Estado Civil</label>
-          <div class="flex gap-3">
-            <label class="flex-1 cursor-pointer">
-              <input type="radio" name="marital-status" id="radio-casado" value="casado" class="hidden peer">
-              <div class="px-4 py-2.5 bg-gray-50 border-2 border-gray-200 rounded-lg text-center text-sm peer-checked:bg-blue-50 peer-checked:border-blue-500">
-                Casado(a)
-              </div>
-            </label>
-            <label class="flex-1 cursor-pointer">
-              <input type="radio" name="marital-status" id="radio-solteiro" value="solteiro" class="hidden peer" checked>
-              <div class="px-4 py-2.5 bg-gray-50 border-2 border-gray-200 rounded-lg text-center text-sm peer-checked:bg-blue-50 peer-checked:border-blue-500">
-                Solteiro(a)
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Setor</label>
-          <input id="input-setor" type="text"
-                 placeholder="Ex: Setor 1, Sede"
-                 class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm">
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Campo</label>
-          <input id="input-campo" type="text"
-                 placeholder="Ex: Tapauá, Comunidade"
-                 class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm">
-        </div>
-      </div>
-
-      <!-- CÔNJUGE -->
-      <div id="spouse-section" class="hidden bg-blue-50 rounded-xl p-4 shadow-sm border border-blue-200 space-y-4">
-        <h3 class="text-blue-900 font-semibold">Informações do Cônjuge</h3>
-
-        <!-- FOTO -->
-        <div>
-          <label class="block text-sm font-medium text-blue-900 mb-2">Foto do Cônjuge</label>
-          <div class="flex items-center gap-3">
-            <div id="spouse-photo-preview"
-                 class="w-16 h-16 rounded-full bg-blue-100 border-2 border-blue-300 flex items-center justify-center overflow-hidden">
-              <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-              </svg>
-            </div>
-
-            <div class="flex-1">
-              <input type="file" id="spouse-photo-input" accept="image/*" class="hidden">
-              <button id="upload-spouse-photo-btn"
-                      class="w-full bg-blue-100 text-blue-700 py-2 px-3 rounded-lg text-sm font-medium border border-blue-300">
-                Escolher Foto
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-blue-900 mb-1">Nome do Cônjuge</label>
-          <input id="input-conjuge" type="text"
-                 placeholder="Nome completo"
-                 class="w-full px-4 py-2.5 bg-white border border-blue-200 rounded-lg text-sm">
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-blue-900 mb-1">Cargo do Cônjuge</label>
-          <select id="input-cargo-conjuge"
-                  class="w-full px-4 py-2.5 bg-white border border-blue-200 rounded-lg text-sm">
-            <option value="">Selecione o cargo</option>
-            <option>Missionária</option><option>Diaconisa</option><option>Auxiliar</option>
-          </select>
-        </div>
-      </div>
-
-      <p id="form-error" class="hidden text-red-500 text-sm text-center"></p>
-      <div id="form-loading" class="hidden text-center py-4 text-blue-600">Salvando...</div>
-
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer id="main-footer" class="bg-white border-t border-blue-100 px-4 py-3 flex-shrink-0">
-  <div class="max-w-lg mx-auto">
-    <p class="text-center text-xs text-gray-400 mb-2">Igreja Ministério Belém Tapauá</p>
-    <button id="admin-link"
-            class="w-full text-blue-600 text-sm font-medium py-2 hover:text-blue-800">
-      Área Administrativa
-    </button>
-  </div>
+<footer class="p-4 text-center text-sm">
+  <p>Igreja Ministério Belém Tapauá</p>
+  <button id="admin-link" class="mt-2 text-blue-600 underline">Área Administrativa</button>
 </footer>
 
-<!-- MODAL EXCLUSÃO -->
-<div id="delete-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-  <div class="bg-white rounded-2xl p-6 max-w-sm w-full">
-    <h3 class="text-lg font-bold text-gray-800 mb-2">Excluir Obreiro?</h3>
-    <p id="delete-member-name" class="text-sm text-gray-500 mb-6"></p>
-    <div class="flex gap-3">
-      <button id="cancel-delete-btn"
-              class="flex-1 py-2.5 border border-gray-300 rounded-xl font-medium">
-        Cancelar
-      </button>
-      <button id="confirm-delete-btn"
-              class="flex-1 py-2.5 bg-red-600 text-white rounded-xl font-medium">
-        Excluir
-      </button>
-    </div>
-  </div>
-</div>
-
-<div id="toast"
-     class="hidden fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium">
-</div>
-<!-- FIREBASE SDK -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js"></script>
 
 <script>
-// ======================
-// 🔥 FIREBASE CONFIG
-// ======================
-const firebaseConfig = {
+// CONFIG
+firebase.initializeApp({
   apiKey:"AIzaSyCTfWEzEhm1EwgV5rXHeyYobyCj5HODrGA",
   authDomain:"qobt-d795a.firebaseapp.com",
-  projectId:"qobt-d795a",
-  storageBucket:"qobt-d795a.appspot.com",
-  messagingSenderId:"403676737812",
-  appId:"1:403676737812:web:8074bf2c1df2b234129201"
-};
-firebase.initializeApp(firebaseConfig);
+  projectId:"qobt-d795a"
+});
 const db = firebase.firestore();
 
-// ======================
-// APP ESTADO
-// ======================
 let members = [];
+let editing = null;
 let isAdmin = false;
-let editingMember = null;
-let photoBase64 = '';
-let spousePhotoBase64 = '';
 const ADMIN_PASSWORD = "IGREJA2026";
 
-// ======================
-// 📌 SELETORES RÁPIDOS
-// ======================
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-// ======================
-// 📌 VIEWS
-// ======================
-const views = ["public","login","admin","form","profile"];
-function showView(v){
-  views.forEach(s => $(`${s}-view`).classList.add("hidden"));
-  $(`${v}-view`).classList.remove("hidden");
+// VIEW HANDLER
+function show(v){ ["public","login","admin","form"].forEach(x => $(x+"-view").classList.add("hidden"));
+$(v+"-view").classList.remove("hidden"); }
+
+// LOAD DATA
+db.collection("obreiro").orderBy("nome").onSnapshot(snap=>{
+  members = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  renderPublic();
+  renderAdmin();
+});
+
+// RENDER PUBLIC
+function renderPublic(q=""){
+  const list = $("members-list");
+  const filtered = members.filter(m=>m.nome.toLowerCase().includes(q.toLowerCase()));
+  list.innerHTML = filtered.map(m=>`<div class="p-2 bg-white rounded shadow">
+    <p class="font-semibold">${m.nome}</p><p class="text-sm">${m.cargo}</p>
+  </div>`).join("");
+  $("empty-state").classList.toggle("hidden", filtered.length>0);
+  $("member-count").innerText = `${filtered.length} encontrado(s)`;
 }
-// Exibe view inicial
-showView("public");
+$("search-input").oninput=e=>renderPublic(e.target.value);
 
-// ======================
-// 📌 TOAST
-// ======================
-function toast(msg){
-  const t = $("toast");
-  t.textContent = msg;
-  t.classList.remove("hidden");
-  setTimeout(()=>t.classList.add("hidden"),2000);
-}
-
-// ======================
-// 👀 FIRESTORE LISTENER
-// ======================
-db.collection("obreiro")
-  .orderBy("nome")
-  .onSnapshot(snapshot => {
-    members = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    renderPublicList();
-    renderAdminList();
-  });
-
-// ======================
-// 🔍 BUSCA
-// ======================
-$("search-input").addEventListener("input", e => renderPublicList(e.target.value));
-
-// ======================
-// 🔑 LOGIN
-// ======================
-$("admin-link").onclick = () => showView(isAdmin ? "admin" : "login");
-$("login-btn").onclick = () => {
-  $("login-error").classList.add("hidden");
-  if($("admin-password").value === ADMIN_PASSWORD){
-    isAdmin = true;
-    $("admin-password").value = "";
-    showView("admin");
-    toast("Bem-vindo!");
-  } else $("login-error").classList.remove("hidden");
+// LOGIN
+$("admin-link").onclick=()=>show(isAdmin?"admin":"login");
+$("login-btn").onclick=()=>{
+  if($("admin-password").value===ADMIN_PASSWORD){ isAdmin=true; show("admin"); }
+  else $("login-error").classList.remove("hidden");
 };
-$("back-from-login").onclick = () => showView("public");
-$("logout-btn").onclick = () => { isAdmin=false; showView("public"); toast("Sessão encerrada!"); };
+$("back-from-login").onclick=()=>show("public");
+$("logout-btn").onclick=()=>{isAdmin=false;show("public")};
 
-// ======================
-// ➕ ADICIONAR / EDITAR
-// ======================
-$("add-member-btn").onclick = () => {
-  editingMember = null;
-  clearForm();
-  $("form-title").textContent = "Novo Obreiro";
-  showView("form");
-};
-
-$("cancel-form-btn").onclick = () => showView("admin");
-
-// ======================
-// 📸 FOTO
-// ======================
-$("upload-photo-btn").onclick = () => $("photo-input").click();
-$("photo-input").addEventListener("change", e => readImage(e, "obreiro"));
-
-$("upload-spouse-photo-btn").onclick = () => $("spouse-photo-input").click();
-$("spouse-photo-input").addEventListener("change", e => readImage(e, "conjuge"));
-
-// Leitor de imagem base64
-function readImage(e, type){
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    const img = new Image();
-    img.onload = ()=>{
-      const canvas = document.createElement("canvas");
-      const max = 300;
-      let w = img.width, h = img.height;
-      if(w>h && w>max) h*=max/w, w=max;
-      else if(h>max) w*=max/h, h=max;
-      canvas.width=w; canvas.height=h;
-      canvas.getContext("2d").drawImage(img,0,0,w,h);
-      if(type==="obreiro") photoBase64=canvas.toDataURL("image/jpeg",0.7);
-      else spousePhotoBase64=canvas.toDataURL("image/jpeg",0.7);
-      updatePreviews();
-    };
-    img.src = reader.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function updatePreviews(){
-  $("photo-preview").innerHTML = photoBase64
-    ? `<img src="${photoBase64}" class="w-full h-full object-cover rounded-full">`
-    : `<svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>`;
-  $("spouse-photo-preview").innerHTML = spousePhotoBase64
-    ? `<img src="${spousePhotoBase64}" class="w-full h-full object-cover rounded-full">`
-    : `<svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>`;
-}
-
-// ======================
-// 💾 SALVAR
-// ======================
-$("save-form-btn").onclick = async () => {
-  const nome = $("input-nome").value.trim();
-  const cargo = $("input-cargo").value.trim();
-  const casado = $("radio-casado").checked;
-
-  if(!nome){$("form-error").textContent="Digite o nome";$("form-error").classList.remove("hidden");return;}
-  if(!cargo){$("form-error").textContent="Selecione o cargo";$("form-error").classList.remove("hidden");return;}
-
-  $("form-error").classList.add("hidden");
-
-  const obj = {
-    nome,
-    cargo,
-    setor:$("input-setor").value.trim(),
-    campo:$("input-campo").value.trim(),
-    casado,
-    conjuge:casado?$("input-conjuge").value.trim():"",
-    cargo_conjuge:casado?$("input-cargo-conjuge").value:"",
-    foto:photoBase64,
-    foto_conjuge:casado?spousePhotoBase64:'',
-    createdAt:editingMember?.createdAt || new Date().toISOString()
-  };
-
-  try{
-    if(editingMember){
-      await db.collection("obreiro").doc(editingMember.id).update(obj);
-      toast("Atualizado!");
-    } else {
-      await db.collection("obreiro").add(obj);
-      toast("Cadastrado!");
-    }
-    showView("admin");
-  }catch(e){toast("Erro ao salvar")}
-};
-
-// ======================
-// 🗑 CONFIRMAR EXCLUSÃO
-// ======================
-let deleteMember = null;
-function confirmDelete(id){
-  deleteMember = members.find(m=>m.id===id);
-  $("delete-member-name").textContent = `Excluir ${deleteMember.nome}?`;
-  $("delete-modal").classList.remove("hidden");
-}
-
-$("cancel-delete-btn").onclick = ()=> $("delete-modal").classList.add("hidden");
-$("confirm-delete-btn").onclick = async ()=>{
-  await db.collection("obreiro").doc(deleteMember.id).delete();
-  $("delete-modal").classList.add("hidden");
-  toast("Excluído!");
-};
-
-// ======================
-// ✏️ EDITAR
-// ======================
-function editMember(id){
-  editingMember = members.find(m=>m.id===id);
-  if(!editingMember) return;
-  $("form-title").textContent = "Editar Obreiro";
-
-  photoBase64 = editingMember.foto || '';
-  spousePhotoBase64 = editingMember.foto_conjuge || '';
-  updatePreviews();
-
-  $("input-nome").value = editingMember.nome || '';
-  $("input-cargo").value = editingMember.cargo || '';
-  $("input-setor").value = editingMember.setor || '';
-  $("input-campo").value = editingMember.campo || '';
-
-  if(editingMember.casado){
-    $("radio-casado").checked=true;
-    $("spouse-section").classList.remove("hidden");
-    $("input-conjuge").value = editingMember.conjuge || '';
-    $("input-cargo-conjuge").value = editingMember.cargo_conjuge || '';
-  } else {
-    $("radio-solteiro").checked=true;
-    $("spouse-section").classList.add("hidden");
-  }
-
-  showView("form");
-}
-
-// ======================
-// 📋 LIMPAR FORM
-// ======================
-function clearForm(){
-  editingMember=null;
-  photoBase64=''; spousePhotoBase64='';
-  ["input-nome","input-cargo","input-setor","input-campo","input-conjuge","input-cargo-conjuge"]
-    .forEach(id=>$(id).value="");
-  $("radio-solteiro").checked = true;
-  $("spouse-section").classList.add("hidden");
-  updatePreviews();
-}
-
-// ======================
-// 🎨 RENDER LISTS
-// ======================
-function renderPublicList(q=""){
-  const list = $("members-list").querySelector("div");
-  const fil = members.filter(m=>m.nome?.toLowerCase().includes(q.toLowerCase()));
-  list.innerHTML = fil.map(m=>`
-    <div class="bg-white rounded-xl p-4 shadow-sm border cursor-pointer"
-         onclick="showProfile('${m.id}')">
-      <p class="font-semibold">${m.nome}</p>
-      <p class="text-sm text-blue-600">${m.cargo}</p>
-    </div>`).join("");
-  $("empty-state").classList.toggle("hidden", fil.length>0);
-  $("member-count").textContent = fil.length+" encontrado(s)";
-}
-
-function renderAdminList(){
+// ADMIN RENDER
+function renderAdmin(){
   $("admin-empty-state").classList.toggle("hidden", members.length>0);
   $("admin-members-list").innerHTML = members.map(m=>`
-    <div class="bg-white rounded-xl p-4 shadow-sm border flex justify-between items-center">
-      <div>
-        <p class="font-semibold">${m.nome}</p>
-        <p class="text-sm text-blue-600">${m.cargo}</p>
-      </div>
-      <div class="flex gap-3">
-        <button onclick="editMember('${m.id}')" class="text-blue-600 font-medium">Editar</button>
-        <button onclick="confirmDelete('${m.id}')" class="text-red-600 font-medium">Excluir</button>
+    <div class="p-2 bg-white rounded shadow flex justify-between">
+      <div><p class="font-semibold">${m.nome}</p><p class="text-xs">${m.cargo}</p></div>
+      <div class="flex gap-2">
+        <button onclick="edit('${m.id}')" class="text-blue-600">Editar</button>
+        <button onclick="del('${m.id}')" class="text-red-600">Excluir</button>
       </div>
     </div>`).join("");
 }
 
-// ======================
-// 👤 PERFIL
-// ======================
-function showProfile(id){
-  const m = members.find(x=>x.id===id);
-  if(!m) return;
-
-  $("profile-content").innerHTML = `
-    <button onclick="showView('public')" class="text-blue-600 p-4">← Voltar</button>
-    <div class="text-center px-4 pb-6">
-      ${m.foto?`<img src="${m.foto}" class="w-32 h-32 rounded-full mx-auto border-4 border-blue-200 shadow">`
-              :`<div class="w-32 h-32 bg-blue-100 mx-auto rounded-full flex items-center justify-center"></div>`}
-      <h2 class="text-2xl font-bold text-gray-800 mt-4">${m.nome}</h2>
-      <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full">${m.cargo}</span>
-    </div>
-
-    ${m.casado?`
-      <div class="px-4 pb-4">
-        <h3 class="text-blue-900 font-semibold mb-2">Cônjuge</h3>
-        ${m.foto_conjuge?`<img src="${m.foto_conjuge}" class="w-20 h-20 rounded-full border">`:``}
-        <p class="font-medium">${m.conjuge||""}</p>
-        <p class="text-sm text-blue-700">${m.cargo_conjuge||""}</p>
-      </div>
-    `:''}
-
-    <div class="px-4 pb-8 space-y-3">
-      ${m.setor?`<p><strong>Setor:</strong> ${m.setor}</p>`:''}
-      ${m.campo?`<p><strong>Campo:</strong> ${m.campo}</p>`:''}
-    </div>
-  `;
-  showView("profile");
-}
-// Deixa funções acessíveis no HTML (eventos inline)
-window.showView = showView;
-window.editMember = editMember;
-window.confirmDelete = confirmDelete;
-window.showProfile = showProfile;
+// NEW / EDIT
+$("add-member-btn").onclick=()=>{
+  editing=null;
+  $("input-nome").value="";$("input-cargo").value="";
+  $("input-setor").value="";$("input-campo").value="";
+  $("form-title").innerText="Novo Obreiro";
+  show("form");
+};
+$("cancel-form-btn").onclick=()=>show("admin");
+$("save-form-btn").onclick=async()=>{
+  const o={
+    nome:$("input-nome").value.trim(),
+    cargo:$("input-cargo").value.trim(),
+    setor:$("input-setor").value.trim(),
+    campo:$("input-campo").value.trim()
+  };
+  if(!o.nome||!o.cargo) return alert("Preencha Nome e Cargo");
+  editing ? await db.collection("obreiro").doc(editing).update(o)
+          : await db.collection("obreiro").add(o);
+  show("admin");
+};
+window.edit=id=>{
+  const o=members.find(x=>x.id===id);
+  editing=id;
+  $("input-nome").value=o.nome;
+  $("input-cargo").value=o.cargo;
+  $("input-setor").value=o.setor||"";
+  $("input-campo").value=o.campo||"";
+  $("form-title").innerText="Editar Obreiro";
+  show("form");
+};
+window.del=id=>db.collection("obreiro").doc(id).delete();
 </script>
 </body>
 </html>
